@@ -1,5 +1,8 @@
 all: secretapi sender
 
+debug: secretapi.c
+	cl secretapi.c Ws2_32.lib -o secretapi.exe -DDEBUG
+
 secretapi: secretapi.c spi.h gpio-mmap.h
 	gcc secretapi.c -o secretapi -DTARGET -DIMX 
 	sudo chown root:root secretapi

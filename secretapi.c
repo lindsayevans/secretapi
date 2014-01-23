@@ -1,11 +1,23 @@
+#ifdef __linux__ 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
+
+#ifdef _WIN32
+#include <inttypes.h>
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+#include <winsock2.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
 #define BUFLEN 512
 #define NPACK 10
