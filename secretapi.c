@@ -1,17 +1,15 @@
-#ifdef __linux__ 
+#ifdef _WIN32 // Windows
+#include <inttypes.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#else // POSIX
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#endif
-
-#ifdef _WIN32
-#include <inttypes.h>
-#if defined(_MSC_VER)
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
-#endif
-#include <winsock2.h>
+#define INVALID_SOCKET -1
 #endif
 
 #include <stdio.h>
@@ -70,8 +68,19 @@ int main(void)
     char buf[BUFLEN];
     ssize_t num_datas;
 
-   if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1)
-      diep("socket");
+#ifdef _WIN32
+    WSADATA wsa;
+     printf("\nInitialising Winsock...");
+        if (WSAStartup(MAKEWORD(2,2),&wsa) != 0)
+        {
+            printf("Failed. Error Code : %d",WSAGetLastError());
+            exit(EXIT_FAILURE);
+        }
+        printf("Initialised.\n");
+#endif
+
+   if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==INVALID_SOCKET)
+        diep("socket");
 
     memset((void *) &si_me, (int) 0, (size_t) sizeof(si_me));
     si_me.sin_family = AF_INET;
